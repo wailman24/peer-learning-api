@@ -45,21 +45,31 @@ class RoomController extends Controller
 
     public function addstudent(Request $request)
     {
-        $validated = $request->validate([
-            'student_id' => 'required|exists:users,id',
-            'room_id' => 'required|exists:rooms,id'
-        ]);
+        try {
 
-        $studentId = $validated['student_id'];
-        $room = $validated['room_id'];
-        // Check if student already joined
-        if ($room->students()->where('user_id', $studentId)->exists()) {
-            return response()->json(['message' => 'Student already joined this room.'], 409);
+
+            $validated = $request->validate([
+                'student_id' => 'required|exists:users,id',
+                'room_id' => 'required|exists:rooms,id'
+            ]);
+
+            $studentId = $validated['student_id'];
+            $roomId = $validated['room_id'];
+            $room = Room::findOrFail($roomId);
+            // Check if student already joined
+            if ($room->students()->where('user_id', $studentId)->exists()) {
+                return response()->json(['message' => 'Student already joined this room.'], 409);
+            }
+
+            $room->students()->attach($studentId);
+
+            return response()->json(['message' => 'Student successfully added to the room.']);
+        } catch (\Throwable $th) {
+            return response()->json([
+                'status' => false,
+                'message' => $th->getMessage()
+            ], 500);
         }
-
-        $room->students()->attach($studentId);
-
-        return response()->json(['message' => 'Student successfully added to the room.']);
     }
 
     public function removestudent(Request $request)
@@ -70,7 +80,8 @@ class RoomController extends Controller
         ]);
 
         $studentId = $validated['student_id'];
-        $room = $validated['room_id'];
+        $roomId = $validated['room_id'];
+        $room = Room::findOrFail($roomId);
         $room->students()->detach($studentId);
 
         return response()->json(['message' => 'Student removed from room.']);
@@ -88,12 +99,12 @@ class RoomController extends Controller
                 'tutor_id' => 'required|exists:users,id'
             ]);
 
-            $updatedroom = $room->update([
+            $room->update([
                 'title' => $request->title,
                 'description' => $request->description,
                 'tutor_id' => $request->tutor_id
             ]);
-            return new RoomResource($updatedroom);
+            return new RoomResource($room);
         } catch (\Throwable $th) {
             return response()->json([
                 'status' => false,

@@ -16,5 +16,6 @@ Route::get('/getallrooms', [RoomController::class, 'index']);
 Route::post('/createroom', [RoomController::class, 'store']); //have to be in middlware
 Route::post('/addstudent', [RoomController::class, 'addstudent']);
 Route::delete('/removestudent', [RoomController::class, 'removestudent']);
-Route::put('/updateroom', [RoomController::class, 'update']); //have to be in middlware
+Route::put('/updateroom/{room}', [RoomController::class, 'update']); //have to be in middlware
 Route::delete('/deleteroom', [RoomController::class, 'destroy']); //have to be in middlware
+
