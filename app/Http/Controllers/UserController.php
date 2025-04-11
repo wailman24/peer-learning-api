@@ -9,7 +9,7 @@ use Illuminate\Validation\ValidationException;
 
 class UserController extends Controller
 {
-    
+
     public function register(Request $request)
     {
         try {
@@ -23,6 +23,7 @@ class UserController extends Controller
                 'name' => $request->name,
                 'email' => $request->email,
                 'password' => Hash::make($request->password),
+                'role' => $request->role
                 //'email_verified_at' => now(),
             ]);
 

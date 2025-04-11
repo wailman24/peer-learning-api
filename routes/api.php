@@ -1,6 +1,9 @@
 <?php
 
+use App\Http\Controllers\PointsController;
+use App\Http\Controllers\RatingController;
 use App\Http\Controllers\RoomController;
+use App\Http\Controllers\SessionController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -13,9 +16,29 @@ Route::post('/register', [UserController::class, 'register']);
 Route::post('/login', [UserController::class, 'login']);
 
 Route::get('/getallrooms', [RoomController::class, 'index']);
-Route::post('/createroom', [RoomController::class, 'store']); //have to be in middlware
 Route::post('/addstudent', [RoomController::class, 'addstudent']);
 Route::delete('/removestudent', [RoomController::class, 'removestudent']);
-Route::put('/updateroom/{room}', [RoomController::class, 'update']); //have to be in middlware
-Route::delete('/deleteroom', [RoomController::class, 'destroy']); //have to be in middlware
 
+
+Route::middleware(['auth:sanctum', 'istutor'])->group(function () {
+    Route::post('/createroom', [RoomController::class, 'store']);
+    Route::put('/updateroom/{room}', [RoomController::class, 'update']);
+    Route::delete('/deleteroom/{room}', [RoomController::class, 'destroy']);
+});
+
+Route::get('/getallsessions', [SessionController::class, 'index']);
+
+Route::middleware(['auth:sanctum', 'istutor'])->group(function () {
+    Route::post('/createsession', [SessionController::class, 'store']);
+    Route::put('/updatesession/{session}', [SessionController::class, 'update']);
+    Route::delete('/deletesession/{session}', [SessionController::class, 'destroy']);
+});
+
+Route::post('/ratings', [RatingController::class, 'store']);
+Route::get('/ratings/tutor/{tutor_id}/average', [RatingController::class, 'tutorAverage']);
+Route::get('/ratings/tutor/{tutor_id}', [RatingController::class, 'tutorRatings']);
+
+
+Route::post('/points', [PointsController::class, 'store']);
+Route::get('/points/{user_id}/total', [PointsController::class, 'total']);
+Route::get('/points/{user_id}/history', [PointsController::class, 'history']);

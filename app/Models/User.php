@@ -22,6 +22,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'role'
     ];
 
 
@@ -51,6 +52,11 @@ class User extends Authenticatable
     public function createdRooms()
     {
         return $this->hasMany(Room::class);
+    }
+
+    public function rating()
+    {
+        return $this->hasMany(Rating::class);
     }
 
     public function joinedRooms()

@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\SessionResource;
+use App\Models\Room;
 use App\Models\Session;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class SessionController extends Controller
 {
@@ -24,12 +26,19 @@ class SessionController extends Controller
     public function store(Request $request)
     {
         try {
+            $user = Auth::user();
             $request->validate([
                 'room_id' => 'required|exists:rooms,id',
                 'title' => 'required',
                 'start_time' => 'required',
                 'meet_link' => 'required'
             ]);
+            $room = Room::findOrFail($request->room_id);
+            if ($room->tutor_id != $user->id) {
+                return response()->json([
+                    'message' => 'this room is not for this user'
+                ]);
+            }
             $session = Session::create([
                 'room_id' => $request->room_id,
                 'title' => $request->title,
@@ -74,13 +83,13 @@ class SessionController extends Controller
                 'meet_link' => 'required'
             ]);
 
-            $updatedsession = $session->update([
+            $session->update([
                 'room_id' => $request->room_id,
                 'title' => $request->title,
                 'start_time' => $request->start_time,
                 'meet_link' => $request->meet_link
             ]);
-            return new SessionResource($updatedsession);
+            return new SessionResource($session);
         } catch (\Throwable $th) {
             return response()->json([
                 'status' => false,

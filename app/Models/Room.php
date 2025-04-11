@@ -20,4 +20,14 @@ class Room extends Model
     {
         return $this->belongsToMany(User::class, 'room_user');
     }
+
+    public function messages()
+    {
+        return $this->hasMany(Message::class);
+    }
+
+    public function rating()
+    {
+        return $this->hasMany(Rating::class);
+    }
 }
