@@ -28,6 +28,9 @@ Route::middleware(['auth:sanctum', 'istutor'])->group(function () {
 
 Route::get('/getallsessions', [SessionController::class, 'index']);
 
+Route::get('/getnumberofallrooms', [RoomController::class, 'getnumberofall']);
+Route::get('/getnumberofallsessions', [SessionController::class, 'getnumberofallsession']);
+
 Route::middleware(['auth:sanctum', 'istutor'])->group(function () {
     Route::post('/createsession', [SessionController::class, 'store']);
     Route::put('/updatesession/{session}', [SessionController::class, 'update']);

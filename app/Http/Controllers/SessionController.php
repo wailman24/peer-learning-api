@@ -54,6 +54,11 @@ class SessionController extends Controller
         }
     }
 
+    public function getnumberofallsession()
+    {
+        $numberpfsessions = Session::count();
+        return response()->json($numberpfsessions);
+    }
     /**
      * Display the specified resource.
      */

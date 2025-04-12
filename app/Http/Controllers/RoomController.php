@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\RoomResource;
 use App\Models\Room;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class RoomController extends Controller
@@ -62,7 +63,10 @@ class RoomController extends Controller
             }
 
             $room->students()->attach($studentId);
-
+            $user = User::findOrFail($studentId);
+            $user->update([
+                'role' => 'tutor'
+            ]);
             return response()->json(['message' => 'Student successfully added to the room.']);
         } catch (\Throwable $th) {
             return response()->json([
@@ -113,9 +117,12 @@ class RoomController extends Controller
         }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
+    public function getnumberofall()
+    {
+        $numberpfrooms = Room::count();
+        return response()->json($numberpfrooms);
+    }
+
     public function destroy(Room $room)
     {
         try {

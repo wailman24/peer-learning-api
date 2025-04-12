@@ -17,13 +17,13 @@ class UserController extends Controller
                 'name' => 'required|string',
                 'email' => 'required|email|unique:users',
                 'password' => 'required',
-                'role' => 'required'
+
             ]);
             $user = User::create([
                 'name' => $request->name,
                 'email' => $request->email,
                 'password' => Hash::make($request->password),
-                'role' => $request->role
+                'role' => 'student'
                 //'email_verified_at' => now(),
             ]);
 
